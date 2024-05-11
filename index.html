@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cat1</title>
+</head>
+<body>
+    ============================================PRIORITY QUEUE==================================
+
+import java.util.*;
+
+public class PriorityQueueLinkedList {
+    static class Node {
+        int data;
+        int priority;
+        Node next;
+
+        public Node(int data, int priority) {
+            this.data = data;
+            this.priority = priority;
+            this.next = null;
+        }
+    }
+
+    private static Node head = null;
+
+    private static void enqueue(int data, int priority) {
+        Node newNode = new Node(data, priority);
+        if (head == null || priority < head.priority) {
+            newNode.next = head;
+            head = newNode;
+        } else {
+            Node temp = head;
+            while (temp.next != null && temp.next.priority <= priority) {
+                temp = temp.next;
+            }
+            newNode.next = temp.next;
+            temp.next = newNode;
+        }
+    }
+
+    private static int dequeue() {
+        if (head == null) {
+            System.out.println("Error List Empty");
+            return -1;
+        }
+        int data = head.data;
+        head = head.next;
+        return data;
+    }
+
+    private static void display() {
+        if (head == null) {
+            System.out.println("Empty");
+            return;
+        }
+        Node temp = head;
+        System.out.print("Queue: ");
+        while (temp != null) {
+            System.out.print(temp.data + " "+temp.priority+" ");
+            temp = temp.next;
+        }
+        System.out.println();
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        while (true) {
+            // System.out.println("1) Insertion\n2) Deletion\n3) Display\n4) Exit");
+            int choice = scanner.nextInt();
+            switch (choice) {
+                case 1:
+                    // System.out.println("Enter value and priority:");
+                    int value = scanner.nextInt();
+                    int priority = scanner.nextInt();
+                    enqueue(value, priority);
+                    // display();
+                    break;
+                case 2:
+                    int deleted = dequeue();
+                    if (deleted != -1) {
+                        // System.out.println("Deleted element: " + deleted);
+                    }
+                    // display();
+                    break;
+                case 3:
+                    display();
+                    break;
+                case 4:
+                    System.exit(0);
+                default:
+                    System.out.println("Wrong Choice");
+            }
+        }
+    }
+}
+
+====================================================MAXIMUM SLIDING WINDOW====================================
+
+import java.util.*;
+
+public class SlidingWindowMaximum {
+    public static int[] maxSlidingWindow(int[] nums, int k) {
+        if (nums == null || nums.length == 0 || k <= 0) {
+            return new int[0];
+        }
+
+        int n = nums.length;
+        int[] result = new int[n - k + 1];
+        Deque<Integer> deque = new LinkedList<>();
+
+        for (int i = 0; i < n; i++) {
+            // Remove indices that are out of the current window
+            while (!deque.isEmpty() && deque.peek() < i - k + 1) {
+                deque.poll();
+            }
+
+            // Remove indices of elements smaller than the current element from the back
+            while (!deque.isEmpty() && nums[deque.peekLast()] < nums[i]) {
+                deque.pollLast();
+            }
+
+            deque.offer(i);
+
+            // Add the maximum element in the current window to the result array
+            if (i - k + 1 >= 0) {
+                result[i - k + 1] = nums[deque.peek()];
+            }
+        }
+
+        return result;
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        int n = scanner.nextInt();
+        int[] nums = new int[n];
+        for (int i = 0; i < n; i++) {
+            nums[i] = scanner.nextInt();
+        }
+        int k = scanner.nextInt();
+
+        int[] result = maxSlidingWindow(nums, k);
+        for (int num : result) {
+            System.out.print(num + " ");
+        }
+    }
+}
+
+========================================STACK PERMUTATION============================================
+
+import java.util.*;
+
+public class StackPermutation {
+    public static boolean isStackPermutationPossible(int[] input, int[] output) {
+        Stack<Integer> stack = new Stack<>();
+        Queue<Integer> inputQueue = new LinkedList<>();
+        Queue<Integer> outputQueue = new LinkedList<>();
+
+        // Initialize input queue
+        for (int num : input) {
+            inputQueue.offer(num);
+        }
+
+        // Initialize output queue
+        for (int num : output) {
+            outputQueue.offer(num);
+        }
+
+        // Simulate the stack permutation process
+        while (!outputQueue.isEmpty()) {
+            int currentOutput = outputQueue.poll();
+            if (!stack.isEmpty() && stack.peek() == currentOutput) {
+                stack.pop();
+            } else {
+                while (!inputQueue.isEmpty() && inputQueue.peek() != currentOutput) {
+                    stack.push(inputQueue.poll());
+                }
+                if (inputQueue.isEmpty() || inputQueue.poll() != currentOutput) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        String[] inputStr = scanner.nextLine().split(" ");
+        String[] outputStr = scanner.nextLine().split(" ");
+        int[] input = new int[inputStr.length];
+        int[] output = new int[outputStr.length];
+        for (int i = 0; i < inputStr.length; i++) {
+            input[i] = Integer.parseInt(inputStr[i]);
+        }
+        for (int i = 0; i < outputStr.length; i++) {
+            output[i] = Integer.parseInt(outputStr[i]);
+        }
+
+        if (isStackPermutationPossible(input, output)) {
+            System.out.println("YES");
+        } else {
+            System.out.println("Not Possible");
+        }
+    }
+}
+
+=========================================TOWER OF HANOI=====================================
+
+import java.io.*;
+import java.util.*;
+
+public class Solution {
+    public static void toh(int n,char from,char to,char aux){
+        if(n==0){
+            return;
+        }
+        toh(n-1,from,aux,to);
+        System.out.println(from+" "+to);
+        toh(n-1,aux,to,from);
+    }
+
+    public static void main(String[] args) {
+        /* Enter your code here. Read input from STDIN. Print output to STDOUT. Your class should be named Solution. */
+        Scanner sc=new Scanner(System.in);
+        int n=sc.nextInt();
+        toh(n,'a','c','b');
+    }
+}
+
+=======================================ALL THE BEST===============================================
+</body>
+</html>
